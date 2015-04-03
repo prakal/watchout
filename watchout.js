@@ -59,11 +59,27 @@ var updateLocation = function(){
 
 };
 
+var player = svg.append("circle");
+
+var dragged = function () {
+  //console.dir(d3.event);
+  d3.select(this).attr("cx", d3.event.x).attr("cy", d3.event.y);
+};
+
+player
+  .attr("r", 20)
+  .attr("fill", "red")
+  .attr("cx",300)
+  .attr("cy",300);
+
+var drag = d3.behavior.drag().on('drag', dragged);
+player.call(drag);
+
+
+
 randomCoordinates(5);
 updateLocation();
 
-randomCoordinates(1);
-updateLocation();
-
+setInterval(function(){randomCoordinates(5); updateLocation();},1000);
 
 
