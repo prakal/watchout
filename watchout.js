@@ -3,6 +3,9 @@ var width = 700;
 var height = 700;
 var asteroidR = 25;
 var playerR = 20;
+var bangs = 0;
+var currentScore = 0;
+var highScore = 0;
 
 // this is the svg for our canvas
 var svg = d3.select("body").append("svg")
@@ -37,7 +40,7 @@ var randomCoordinates = function(n){
   for (var i = 0; i < n; i++){
     asteroidLocation.push({x:Math.random()*width,y:Math.random()*height});
   }
-  asteroidLocation = [{x:100, y:100}];
+  // asteroidLocation = [{x:100, y:100}];
 };
 
 var updateLocation = function(){
@@ -76,8 +79,8 @@ var tweenFactory = function() {
   return function () {
     if (print) {
       console.dir(this);
-      console.log('asteroid', d3.select(this).attr("x"));
-      console.log('Player',player.attr("cx"));
+      // console.log('asteroid', d3.select(this).attr("x"));
+      // console.log('Player',player.attr("cx"));
       print = false;
     }
     var xpos = parseInt(d3.select(this).attr("x"))+ asteroidR;
@@ -89,9 +92,17 @@ var tweenFactory = function() {
 
 
     var dist = Math.sqrt(Math.pow((xpos-xPlayer),2)+Math.pow((ypos-yPlayer),2));
-    console.log(xpos);
-    if (dist < asteroidR + playerR) console.log('bang');
-
+    // console.log(xpos);
+    if (dist < asteroidR + playerR) {
+      console.log('bang');
+      bangs++;
+      d3.select(".collisions").text("Collisions:"+bangs);
+      if (highScore < currentScore) {
+        highScore = currentScore;
+        d3.select(".high").text("High score: "+highScore);
+      }
+      currentScore = 0;
+    }
   };
 };
 
@@ -106,9 +117,14 @@ player.call(drag);
 
 
 
-randomCoordinates(1);
+randomCoordinates(3);
 updateLocation();
 
-setInterval(function(){randomCoordinates(1); updateLocation();},1000);
+setInterval(function(){
+  randomCoordinates(3);
+  updateLocation();
+  currentScore++;
+  d3.select(".current").text("Current score: "+currentScore);
+},1000);
 
 
