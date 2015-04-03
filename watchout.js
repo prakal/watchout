@@ -1,6 +1,8 @@
 // start slingin' some d3 here.
 var width = 700;
 var height = 700;
+var asteroidR = 25;
+var playerR = 20;
 
 // this is the svg for our canvas
 var svg = d3.select("body").append("svg")
@@ -35,6 +37,7 @@ var randomCoordinates = function(n){
   for (var i = 0; i < n; i++){
     asteroidLocation.push({x:Math.random()*width,y:Math.random()*height});
   }
+  asteroidLocation = [{x:100, y:100}];
 };
 
 var updateLocation = function(){
@@ -44,14 +47,15 @@ var updateLocation = function(){
   asteroids.enter()
       .append("image")
       .attr("xlink:href","asteroid.png")
-      .attr("width", '50')
-      .attr("height", '50')
+      .attr("width", asteroidR*2)
+      .attr("height", asteroidR*2)
       .attr("x",function(d){return d.x;})
       .attr("y",function(d){return d.y;});
 
   asteroids.transition().duration(1000)
     .attr("x",function(d){return d.x;})
-    .attr("y",function(d){return d.y;});
+    .attr("y",function(d){return d.y;})
+    .tween("custom", tweenFactory);
 
   asteroids.exit().remove();
 
@@ -66,8 +70,33 @@ var dragged = function () {
   d3.select(this).attr("cx", d3.event.x).attr("cy", d3.event.y);
 };
 
+var print = true;
+
+var tweenFactory = function() {
+  return function () {
+    if (print) {
+      console.dir(this);
+      console.log('asteroid', d3.select(this).attr("x"));
+      console.log('Player',player.attr("cx"));
+      print = false;
+    }
+    var xpos = parseInt(d3.select(this).attr("x"))+ asteroidR;
+    var ypos = parseInt(d3.select(this).attr("y"))+ asteroidR;
+
+    var xPlayer = player.attr("cx");
+    var yPlayer = player.attr("cy");
+
+
+
+    var dist = Math.sqrt(Math.pow((xpos-xPlayer),2)+Math.pow((ypos-yPlayer),2));
+    console.log(xpos);
+    if (dist < asteroidR + playerR) console.log('bang');
+
+  };
+};
+
 player
-  .attr("r", 20)
+  .attr("r", playerR)
   .attr("fill", "red")
   .attr("cx",300)
   .attr("cy",300);
@@ -77,9 +106,9 @@ player.call(drag);
 
 
 
-randomCoordinates(5);
+randomCoordinates(1);
 updateLocation();
 
-setInterval(function(){randomCoordinates(5); updateLocation();},1000);
+setInterval(function(){randomCoordinates(1); updateLocation();},1000);
 
 
