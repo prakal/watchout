@@ -66,7 +66,7 @@ var updateLocation = function(){
       .attr("x",function(d){return d.x;})
       .attr("y",function(d){return d.y;});
 
-  asteroids.transition().duration(2000)
+  asteroids.transition().duration(2000).ease("circle")
     .attr("x",function(d){return d.x;})
     .attr("y",function(d){return d.y;})
     .tween("custom", tweenFactory);
