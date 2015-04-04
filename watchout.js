@@ -1,11 +1,12 @@
 // start slingin' some d3 here.
-var width = 1000;
-var height = 1000;
+var width = 800;
+var height = 800;
 var asteroidR = 25;
 var playerR = 20;
 var bangs = 0;
 var currentScore = 0;
 var highScore = 0;
+//var healthV = width;
 
 // this is the svg for our canvas
 var svg = d3.select("body")
@@ -38,8 +39,13 @@ console.log(svg);
 
 var randomCoordinates = function(n){
   asteroidLocation = [];
+  var px = parseInt(player.attr("cx"));
+  var py = parseInt(player.attr("cy"));
   for (var i = 0; i < n; i++){
-    asteroidLocation.push({x:Math.random()*width,y:Math.random()*height});
+    asteroidLocation.push({
+      x:px+Math.random()*width-width*0.5,
+      y:py+Math.random()*height-height*0.5
+    });
   }
   // asteroidLocation = [{x:100, y:100}];
 };
@@ -57,7 +63,7 @@ var updateLocation = function(){
       .attr("x",function(d){return d.x;})
       .attr("y",function(d){return d.y;});
 
-  asteroids.transition().duration(1000)
+  asteroids.transition().duration(2000)
     .attr("x",function(d){return d.x;})
     .attr("y",function(d){return d.y;})
     .tween("custom", tweenFactory);
@@ -71,9 +77,61 @@ var updateLocation = function(){
 
 var player = svg.append("circle");
 
+var collect = svg.append("circle")
+  .attr('class','collect')
+  .attr('r',20)
+  .attr('cx',100)
+  .attr('cy',100)
+  .attr("fill", "blue");
+
+var healthBar = svg.append('rect')
+  .attr('class','health')
+  // .attr('x','50')
+  // .attr('y','50')
+  .attr('width',width)
+  .attr('height',"20")
+  .style('fill','red');
+
+var banged = false;
+
 var dragged = function () {
   //console.dir(d3.event);
-  d3.select(this).attr("cx", d3.event.x).attr("cy", d3.event.y);
+  var setX = d3.event.x;
+  var setY = d3.event.y;
+
+  if (setX < 50 ){
+    setX = 50;
+  }
+  if (setX > width - 50) {
+    setX = width - 50;
+  }
+  if (setY < 50 ){
+    setY = 50;
+  }
+  if (setY > height - 50) {
+    setY = height - 50;
+  }
+  // allow player to collect item and regain health:
+
+  if (Math.sqrt((Math.pow((setX -   parseInt(collect.attr("cx"))    ),2) + Math.pow((setY - parseInt(collect.attr("cy"))    ),2)))<40){
+    // console.log("cx "+ parseInt(collect.attr("cx") ));
+    // console.log("cy "+parseInt(collect.attr("cy") ));
+    // console.log("setX " +setX);
+    // console.log("setY " +setY);
+    // console.log("setY - cy " ,setY-parseInt(collect.attr("cy")));
+    // console.log("setX - cx ", setX-parseInt(collect.attr("cx")));
+    // console.log(Math.sqrt((Math.pow((setX -   parseInt(collect.attr("cx"))    ),2) + Math.pow((setY - parseInt(collect.attr("cy"))    ),2))));
+    // player can collect item
+    if (banged === false){
+      bangs-=100;
+      healthBar.attr("width",width-bangs);
+      collect.remove();
+      banged = true;
+    }
+
+  }
+
+  d3.select(this).attr("cx", setX).attr("cy", setY);
 };
 
 var print = true;
@@ -99,6 +157,7 @@ var tweenFactory = function() {
     if (dist < asteroidR + playerR) {
       console.log('bang');
       bangs++;
+      if (width - bangs > 0) {healthBar.attr("width", width - bangs);}
       d3.select(".collisions").text("Collisions:"+bangs);
       if (highScore < currentScore) {
         highScore = currentScore;
@@ -128,6 +187,18 @@ setInterval(function(){
   updateLocation();
   currentScore++;
   d3.select(".current").text("Current score: "+currentScore);
-},1000);
+},2000);
+
+setInterval(function(){
+  if (banged) {
+    collect = svg.append("circle")
+      .attr('class','collect')
+      .attr('r',20)
+      .attr('cx',50+Math.random()*width)
+      .attr('cy',Math.random()*height)
+      .attr("fill", "blue");
+    banged = false;
+  }
+},5000);
 
 
