@@ -1,6 +1,6 @@
 // start slingin' some d3 here.
-var width = 700;
-var height = 700;
+var width = 1000;
+var height = 1000;
 var asteroidR = 25;
 var playerR = 20;
 var bangs = 0;
@@ -8,7 +8,8 @@ var currentScore = 0;
 var highScore = 0;
 
 // this is the svg for our canvas
-var svg = d3.select("body").append("svg")
+var svg = d3.select("body")
+  .append("svg")
     .attr("width", width)
     .attr("height", height)
   .append("g");
@@ -49,8 +50,9 @@ var updateLocation = function(){
 
   asteroids.enter()
       .append("image")
-      .attr("xlink:href","asteroid.png")
       .attr("width", asteroidR*2)
+      .attr("class", "shuriken")
+      .attr("xlink:href","http://www.pubzi.com/f/lg-Shuriken.png")
       .attr("height", asteroidR*2)
       .attr("x",function(d){return d.x;})
       .attr("y",function(d){return d.y;});
@@ -65,6 +67,7 @@ var updateLocation = function(){
 
 
 };
+
 
 var player = svg.append("circle");
 
@@ -117,11 +120,11 @@ player.call(drag);
 
 
 
-randomCoordinates(3);
+randomCoordinates(20);
 updateLocation();
 
 setInterval(function(){
-  randomCoordinates(3);
+  randomCoordinates(20);
   updateLocation();
   currentScore++;
   d3.select(".current").text("Current score: "+currentScore);
