@@ -51,7 +51,7 @@ var randomCoordinates = function(n){
 };
 
 var updateLocation = function(){
-  var asteroids = svg.selectAll("image").data(asteroidLocation);
+  var asteroids = svg.selectAll(".shuriken").data(asteroidLocation);
 
 
   asteroids.enter()
@@ -77,12 +77,13 @@ var updateLocation = function(){
 
 var player = svg.append("circle");
 
-var collect = svg.append("circle")
+var collect = svg.append("image")
   .attr('class','collect')
-  .attr('r',20)
-  .attr('cx',100)
-  .attr('cy',100)
-  .attr("fill", "blue");
+  .attr("xlink:href","http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons-256/3d-transparent-glass-icons-signs/089099-3d-transparent-glass-icon-signs-first-aid1.png")
+  .attr("width", asteroidR*2)
+  .attr("height", asteroidR*2)
+  .attr('x',100)
+  .attr('y',100);
 
 var healthBar = svg.append('rect')
   .attr('class','health')
@@ -113,7 +114,7 @@ var dragged = function () {
   }
   // allow player to collect item and regain health:
 
-  if (Math.sqrt((Math.pow((setX -   parseInt(collect.attr("cx"))    ),2) + Math.pow((setY - parseInt(collect.attr("cy"))    ),2)))<40){
+  if (Math.sqrt((Math.pow((setX -   parseInt(collect.attr("x"))    ),2) + Math.pow((setY - parseInt(collect.attr("y"))    ),2)))<40){
     // console.log("cx "+ parseInt(collect.attr("cx") ));
     // console.log("cy "+parseInt(collect.attr("cy") ));
     // console.log("setX " +setX);
@@ -124,9 +125,10 @@ var dragged = function () {
     // player can collect item
     if (banged === false){
       bangs-=100;
+      banged = true;
       healthBar.attr("width",width-bangs);
       collect.remove();
-      banged = true;
+
     }
 
   }
@@ -190,13 +192,17 @@ setInterval(function(){
 },2000);
 
 setInterval(function(){
-  if (banged) {
-    collect = svg.append("circle")
+  // console.log(d3.select('.collect')[0][0]);
+  // d3.select('.collect')[0][0] is the image tag in the DOM
+    // if it is null, then we drop another health pack
+  if (banged || d3.select('.collect')[0][0] === null ) {
+    collect = svg.append("image")
       .attr('class','collect')
-      .attr('r',20)
-      .attr('cx',50+Math.random()*width)
-      .attr('cy',Math.random()*height)
-      .attr("fill", "blue");
+      .attr("xlink:href","http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons-256/3d-transparent-glass-icons-signs/089099-3d-transparent-glass-icon-signs-first-aid1.png")
+      .attr('width',asteroidR*2)
+      .attr('height',asteroidR*2)
+      .attr('x',Math.random()*(width-100)+50)
+      .attr('y',Math.random()*(height-100)+50);
     banged = false;
   }
 },5000);
