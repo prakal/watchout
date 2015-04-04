@@ -6,13 +6,16 @@ var playerR = 20;
 var bangs = 0;
 var currentScore = 0;
 var highScore = 0;
+var gameOver = false;
 //var healthV = width;
 
 // this is the svg for our canvas
 var svg = d3.select("body")
   .append("svg")
+    .style({"position":"absolute","top":100, 'left':020})
     .attr("width", width)
     .attr("height", height)
+    .attr('class','canvas')
   .append("g");
 
 // this is the asteroid
@@ -158,7 +161,32 @@ var tweenFactory = function() {
     // console.log(xpos);
     if (dist < asteroidR + playerR) {
       console.log('bang');
-      bangs++;
+      bangs = bangs + 10;
+
+      if (width - bangs < 0){
+        // display GAME OVER and remove all elements
+        d3.select('.shuriken').remove();
+        d3.select('.collect').remove();
+        player.remove();
+
+        clearInterval(enemyIntervalID);
+        clearInterval(healthIntervalID);
+        if (!gameOver) {
+          gameOver = true;
+        svg.append("image")
+          .attr('x','200')
+          .attr('y','400')
+          .attr("xlink:href","http://shop.artwelove.com/_img/_mngd/product/249-artwork-focus.jpg")
+          .attr("width", 500)
+          .attr("height", 300);
+
+        var scoreboard = document.getElementById('scoreboardID');
+        console.log('scoreboard',scoreboard);
+        scoreboard.style.top = "300px";
+        scoreboard.style.left = "300px";
+      }
+      }
+
       if (width - bangs > 0) {healthBar.attr("width", width - bangs);}
       d3.select(".collisions").text("Collisions:"+bangs);
       if (highScore < currentScore) {
@@ -180,18 +208,19 @@ var drag = d3.behavior.drag().on('drag', dragged);
 player.call(drag);
 
 
-
 randomCoordinates(20);
 updateLocation();
 
-setInterval(function(){
+var enemyIntervalID = setInterval(function(){
   randomCoordinates(20);
   updateLocation();
   currentScore++;
   d3.select(".current").text("Current score: "+currentScore);
 },2000);
 
-setInterval(function(){
+
+
+var healthIntervalID = setInterval(function(){
   // console.log(d3.select('.collect')[0][0]);
   // d3.select('.collect')[0][0] is the image tag in the DOM
     // if it is null, then we drop another health pack
