@@ -36,10 +36,6 @@ var svg = d3.select("body")
 // collection of asteroid locations. each element of object contains x and y coordinates
 var asteroidLocation = [{x:50, y:50},{x:100,y:100}];
 
-
-
-console.log(svg);
-
 var randomCoordinates = function(n){
   asteroidLocation = [];
   var px = parseInt(player.attr("cx"));
@@ -77,6 +73,11 @@ var updateLocation = function(){
 
 };
 
+var distance = function(x1, y1, x2, y2){
+  var xDiffSquared = Math.pow((x1 - x2),2);
+  var yDiffSquared = Math.pow((y1 - y2),2);
+  return Math.sqrt(xDiffSquared + yDiffSquared);
+};
 
 var player = svg.append("circle");
 
@@ -116,15 +117,9 @@ var dragged = function () {
     setY = height - 50;
   }
   // allow player to collect item and regain health:
-
-  if (Math.sqrt((Math.pow((setX -   parseInt(collect.attr("x"))    ),2) + Math.pow((setY - parseInt(collect.attr("y"))    ),2)))<40){
-    // console.log("cx "+ parseInt(collect.attr("cx") ));
-    // console.log("cy "+parseInt(collect.attr("cy") ));
-    // console.log("setX " +setX);
-    // console.log("setY " +setY);
-    // console.log("setY - cy " ,setY-parseInt(collect.attr("cy")));
-    // console.log("setX - cx ", setX-parseInt(collect.attr("cx")));
-    // console.log(Math.sqrt((Math.pow((setX -   parseInt(collect.attr("cx"))    ),2) + Math.pow((setY - parseInt(collect.attr("cy"))    ),2))));
+  var xLoc = parseInt(collect.attr("x"));
+  var yLoc = parseInt(collect.attr("y"));
+  if (distance(setX, setY, xLoc, yLoc) < 40){
     // player can collect item
     if (banged === false){
       bangs-=100;
@@ -133,7 +128,6 @@ var dragged = function () {
       collect.remove();
 
     }
-
   }
 
   d3.select(this).attr("cx", setX).attr("cy", setY);
@@ -152,15 +146,15 @@ var tweenFactory = function() {
     var xpos = parseInt(d3.select(this).attr("x"))+ asteroidR;
     var ypos = parseInt(d3.select(this).attr("y"))+ asteroidR;
 
-    var xPlayer = player.attr("cx");
-    var yPlayer = player.attr("cy");
+    var xPlayer = parseInt(player.attr("cx"));
+    var yPlayer = parseInt(player.attr("cy"));
 
 
 
-    var dist = Math.sqrt(Math.pow((xpos-xPlayer),2)+Math.pow((ypos-yPlayer),2));
+    var dist = distance(xpos, ypos, xPlayer, yPlayer);
     // console.log(xpos);
     if (dist < asteroidR + playerR) {
-      console.log('bang');
+      // console.log('bang');
       bangs = bangs + 10;
 
       if (width - bangs < 0){
@@ -227,7 +221,7 @@ var healthIntervalID = setInterval(function(){
   if (banged || d3.select('.collect')[0][0] === null ) {
     collect = svg.append("image")
       .attr('class','collect')
-      .attr("xlink:href","http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons-256/3d-transparent-glass-icons-signs/089099-3d-transparent-glass-icon-signs-first-aid1.png")
+      .attr("xlink:href","glass-icon.png")
       .attr('width',asteroidR*2)
       .attr('height',asteroidR*2)
       .attr('x',Math.random()*(width-100)+50)
