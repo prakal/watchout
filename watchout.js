@@ -155,7 +155,7 @@ var tweenFactory = function() {
     // console.log(xpos);
     if (dist < asteroidR + playerR) {
       // console.log('bang');
-      bangs = bangs + 10;
+      bangs = bangs + 1;
 
       if (width - bangs < 0){
         // display GAME OVER and remove all elements
