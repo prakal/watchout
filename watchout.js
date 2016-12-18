@@ -1,6 +1,6 @@
 // start slingin' some d3 here.
-var width = 800;
-var height = 800;
+var width = 600;
+var height = 600;
 var asteroidR = 25;
 var playerR = 20;
 var bangs = 0;
@@ -61,7 +61,7 @@ var updateLocation = function(){
       .append("image")
       .attr("width", asteroidR*2)
       .attr("class", "shuriken")
-      .attr("xlink:href","http://www.pubzi.com/f/lg-Shuriken.png")
+      .attr("xlink:href","shuriken.png")
       .attr("height", asteroidR*2)
       .attr("x",function(d){return d.x;})
       .attr("y",function(d){return d.y;});
@@ -82,7 +82,7 @@ var player = svg.append("circle");
 
 var collect = svg.append("image")
   .attr('class','collect')
-  .attr("xlink:href","http://cdn.mysitemyway.com/etc-mysitemyway/icons/legacy-previews/icons-256/3d-transparent-glass-icons-signs/089099-3d-transparent-glass-icon-signs-first-aid1.png")
+  .attr("xlink:href","glass-icon.png")
   .attr("width", asteroidR*2)
   .attr("height", asteroidR*2)
   .attr('x',100)
@@ -175,15 +175,15 @@ var tweenFactory = function() {
           gameOver = true;
         svg.append("image")
           .attr('x','200')
-          .attr('y','400')
-          .attr("xlink:href","http://shop.artwelove.com/_img/_mngd/product/249-artwork-focus.jpg")
+          .attr('y','100')
+          .attr("xlink:href","game-over.jpg")
           .attr("width", 500)
           .attr("height", 300);
 
         var scoreboard = document.getElementById('scoreboardID');
         console.log('scoreboard',scoreboard);
-        scoreboard.style.top = "300px";
-        scoreboard.style.left = "300px";
+        scoreboard.style.top = "150px";
+        scoreboard.style.left = "250px";
       }
       }
 
